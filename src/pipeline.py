@@ -28,7 +28,7 @@ def build_filings(client):
             if not c:continue
             r=dict(raw); r["business_year"]=year_of(r.get("report_nm",""),r.get("rcept_dt","")); r["report_category"]=c; r["report_category_name"]=REPORT_NAMES[c]; r["dart_url"]=DART_VIEWER+str(r.get("rcept_no","")); rows.append(r)
     rows=sorted({str(r.get("rcept_no")):r for r in rows if r.get("rcept_no")}.values(),key=lambda r:(r.get("business_year") or 0,r.get("rcept_dt","")))
-    save(RAW_DIR/"filings.json",rows); rd=RAW_DIR.parent/"reports"; rd.mkdir(parents=True,exist_ok=True)
+    save(RAW_DIR/"filings.json",rows); save(SITE_DATA_DIR/"filings.json",rows); rd=RAW_DIR.parent/"reports"; rd.mkdir(parents=True,exist_ok=True)
     with (rd/"filings.csv").open("w",newline="",encoding="utf-8-sig") as f:
         w=csv.DictWriter(f,fieldnames=["business_year","rcept_dt","report_nm","report_category","rcept_no","corp_name","flr_nm","rm","dart_url"]); w.writeheader()
         for r in rows:w.writerow({k:r.get(k,"") for k in w.fieldnames})
@@ -36,9 +36,12 @@ def build_filings(client):
 def main():
     client=DartClient(); fs=build_filings(client); fmap={(r.get("business_year"),r.get("report_category")):r for r in fs}; end=datetime.now(timezone.utc).year
     annual=[]; half=[]; q1=[]; q3=[]; raw={}
+    available={(r.get("business_year"),r.get("report_category")) for r in fs}
     for y in range(DART_FINANCIAL_START_YEAR,end+1):
         for cat,code,target,cum in (("annual","11011",annual,False),("half","11012",half,True),("quarter1","11013",q1,False),("quarter3","11014",q3,False)):
             path=RAW_FINANCIAL_DIR/f"{y}_{cat}.json"
+            if (y,cat) not in available and not path.exists():
+                continue
             payload=json.loads(path.read_text(encoding="utf-8")) if path.exists() and y<end else client.get_financials_with_fallback(CORP_CODE,y,code)
             DartClient.save_json(path,payload); raw[f"{y}_{cat}"]=payload
             if str(payload.get("status"))=="000" and payload.get("list"): target.append(normalize(payload,y,code,(fmap.get((y,cat)) or {}).get("rcept_dt"),cum))
