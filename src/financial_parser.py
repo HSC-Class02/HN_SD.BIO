@@ -28,7 +28,7 @@ def normalize(payload,year,code,period_end=None,cumulative_flow=False):
     def bs(k):return amount(find_row(rows,ALIASES[k],"BS"))
     def stm(k,cum=None):return amount(find_row(rows,ALIASES[k],"IS"),cumulative_flow if cum is None else cum)
     def cf(k,cum=None):return amount(find_row(rows,ALIASES[k],"CF"),cumulative_flow if cum is None else cum)
-    op=stm("operating_income"); dep=cf("depreciation",False); am=cf("amortization",False)
+    op=stm("operating_income"); dep=cf("depreciation",cumulative_flow); am=cf("amortization",cumulative_flow)
     if dep is None:dep=amount(find_row(rows,ALIASES["depreciation"]))
     if am is None:am=amount(find_row(rows,ALIASES["amortization"]))
     ebitda=op+dep+am if op is not None and (dep is not None or am is not None) else None
