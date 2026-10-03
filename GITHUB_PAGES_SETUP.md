@@ -10,7 +10,7 @@ GitHub 저장소 → **Settings → Pages**에서 Build and deployment의 Source
 
 Dashboard URL:
 
-`https://naena0815-maker.github.io/HN_SD.BIO/`
+`https://hsc-class02.github.io/HN_SD.BIO/`
 
 ## About 링크
 
