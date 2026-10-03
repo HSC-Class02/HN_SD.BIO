@@ -16,7 +16,7 @@ def year_of(n,dt):
     try:return int(dt[:4])
     except:return None
 def build_filings(client):
-    start=max(START_YEAR,2015); end=datetime.now(timezone.utc).year; rows=[]
+    start=START_YEAR; end=datetime.now(timezone.utc).year; rows=[]
     for detail in ("A001","A002","A003"):
         for raw in client.list_filings(CORP_CODE,f"{start}0101",f"{end}1231",detail):
             c=classify(raw.get("report_nm",""))
