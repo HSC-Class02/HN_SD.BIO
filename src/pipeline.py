@@ -7,10 +7,15 @@ from financial_parser import calculate_ratios,normalize
 def save(path,payload):
     path.parent.mkdir(parents=True,exist_ok=True); path.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
 def classify(n):
-    for k,v in REPORT_NAMES.items():
-        if v in n:return k
+    if "사업보고서" in n:return "annual"
+    if "반기보고서" in n:return "half"
+    if "분기보고서" in n:
+        m=re.search(r"\((20\d{2})\.(03|09)\)",n)
+        if m:return "quarter1" if m.group(2)=="03" else "quarter3"
     return None
 def year_of(n,dt):
+    m=re.search(r"\((20\d{2})\.(?:03|06|09|12)\)",n)
+    if m:return int(m.group(1))
     m=re.search(r"사업연도\s*[:：]\s*(20\d{2})",n)
     if m:return int(m.group(1))
     try:return int(dt[:4])
