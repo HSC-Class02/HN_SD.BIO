@@ -11,6 +11,9 @@ class T(unittest.TestCase):
  def test_cis_and_exact_liabilities(self):
   p={"_fs_div_used":"CFS","list":[{"sj_div":"BS","account_nm":"자산총계","thstrm_amount":"100"},{"sj_div":"BS","account_nm":"자본과부채총계","thstrm_amount":"100"},{"sj_div":"BS","account_nm":"부채총계","thstrm_amount":"40"},{"sj_div":"BS","account_nm":"자본총계","thstrm_amount":"60"},{"sj_div":"CIS","account_nm":"매출","thstrm_amount":"120"},{"sj_div":"CIS","account_nm":"영업이익(손실)","thstrm_amount":"10"},{"sj_div":"CIS","account_nm":"분기순이익(손실)","thstrm_amount":"8"}]}
   r=normalize(p,2025,"11011"); self.assertEqual(r["revenue"],120); self.assertEqual(r["operating_income"],10); self.assertEqual(r["net_income"],8); self.assertEqual(r["liabilities"],40)
+ def test_halfyear_net_income_alias(self):
+  p={"_fs_div_used":"CFS","list":[{"sj_div":"CIS","account_nm":"매출","thstrm_amount":"100"},{"sj_div":"CIS","account_nm":"반기 순이익(손실)","thstrm_amount":"5"}]}
+  r=normalize(p,2025,"11012",cumulative_flow=True); self.assertEqual(r["net_income"],5)
  def test_normalize(self):
   p={"_fs_div_used":"CFS","list":[{"sj_div":"BS","account_nm":"자산총계","thstrm_amount":"100"},{"sj_div":"BS","account_nm":"부채총계","thstrm_amount":"40"},{"sj_div":"BS","account_nm":"자본총계","thstrm_amount":"60"},{"sj_div":"IS","account_nm":"매출액","thstrm_amount":"120"},{"sj_div":"IS","account_nm":"영업이익","thstrm_amount":"10"},{"sj_div":"IS","account_nm":"당기순이익","thstrm_amount":"8"}]}
   r=normalize(p,2025,"11011"); self.assertEqual(r["fs_div"],"CFS"); self.assertEqual(r["revenue"],120); self.assertEqual(r["assets"],100)
