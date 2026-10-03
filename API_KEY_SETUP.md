@@ -9,7 +9,7 @@ OpenDART: https://opendart.fss.or.kr/
 ## 2. GitHub에 Secret으로 등록
 
 저장소:
-`https://github.com/naena0815-maker/HN_SD.BIO`
+`https://github.com/HSC-Class02/HN_SD.BIO`
 
 경로:
 
