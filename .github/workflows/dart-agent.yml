@@ -12,7 +12,7 @@ permissions:
   id-token: write
 concurrency:
   group: dart-agent-pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   collect-and-deploy:
     environment:
@@ -47,7 +47,9 @@ jobs:
             echo "No data changes to commit."
           else
             git commit -m "chore: update DART financial data"
-            git push
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
           fi
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
